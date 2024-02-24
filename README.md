@@ -28,11 +28,22 @@ El servicio Usuario expone los siguientes servicios:
 ```http
   PUT /api/usuario/${idUsuarioSeguidor}/seguidor/${idUsuarioSeguido}
 ```
-
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `id_usuario_seguidor` | `Long` | **Requerido**. ID del usuario que intenta realizar la accion |
 | `id_usuario_seguido` | `Long` | **Requerido**. ID del usuario al que se intenta seguir |
+
+###### Respuesta
+```yaml
+{
+    "id": null,
+    "username": "ichiban",
+    "seguidosId": [
+        2,
+        3
+    ]
+}
+```
 
 #### Iniciar sesion (Valida si existe usuario)
 
@@ -44,7 +55,14 @@ El servicio Usuario expone los siguientes servicios:
 | :-------- | :------- | :-------------------------------- |
 | `username`      | `string` | **Requerido**. Username del usuario que se intenta validar |
 
-
+###### Respuesta
+```yaml
+{
+    "id": 1,
+    "username": "ichiban",
+    "seguidosId": null
+} 
+```
 
 ## Running Tests
 
