@@ -22,7 +22,8 @@ public class UsuarioRestController {
 
     @GetMapping("/api/usuario/{username}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public UsuarioDTO iniciarSesion(@PathVariable String username) throws IllegalAccessException {
-        return usuarioServiceImpl.validarExisteUsuario(username);
+    public UsuarioDTO iniciarSesion(@PathVariable String username) {
+        Usuario usuario = usuarioServiceImpl.validarExisteUsuario(username);
+        return new UsuarioDTO(usuario.getId(), usuario.getUsername());
     }
 }

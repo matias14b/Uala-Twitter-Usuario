@@ -34,7 +34,7 @@ class UsuarioServiceImplTest {
     void validarExisteUsuario_conIdUsuarioExistente_retornaUsuario() {
         Usuario usuario = UsuarioBuilder.base().conUsername("Ejemplo").build();
         persistirEnBase(usuario);
-        UsuarioDTO usuarioValidado = usuarioServiceImpl.validarExisteUsuario(usuario.getUsername());
+        Usuario usuarioValidado = usuarioServiceImpl.validarExisteUsuario(usuario.getUsername());
         assertThat(usuarioValidado.getUsername()).isEqualTo(usuario.getUsername());
     }
 

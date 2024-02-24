@@ -1,14 +1,11 @@
 package com.ejercicio.uala.usuario.service;
 
 import com.ejercicio.uala.usuario.domain.Usuario;
-import com.ejercicio.uala.usuario.dto.UsuarioDTO;
 import com.ejercicio.uala.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.nio.file.AccessDeniedException;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,12 +15,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    public UsuarioDTO validarExisteUsuario(String username) throws IllegalAccessError {
+    public Usuario validarExisteUsuario(String username) throws IllegalAccessError {
         Usuario usuario = usuarioRepository.findByUsername(username);
         if (usuario == null) {
             throw new IllegalAccessError("Credenciales invalidas.");
         }
-        return new UsuarioDTO(usuario.getId(), usuario.getUsername());
+        return usuario;
     }
 
     @Override
