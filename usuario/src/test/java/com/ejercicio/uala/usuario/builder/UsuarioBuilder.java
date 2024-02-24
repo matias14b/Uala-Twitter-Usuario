@@ -8,33 +8,39 @@ import java.util.List;
 
 public class UsuarioBuilder {
 
-        private Long id;
-        private String username;
-        private List<Long> seguidosId;
-        private LocalDateTime fechaCreacion;
+    private Long id;
+    private String username;
+    private List<Long> seguidosId;
+    private LocalDateTime fechaCreacion;
 
-        public static UsuarioBuilder base() {
-            UsuarioBuilder builder = new UsuarioBuilder();
-            builder.username = "nombre base";
-            builder.seguidosId = new ArrayList<>();
-            return builder;
-        }
+    public static UsuarioBuilder base() {
+        UsuarioBuilder builder = new UsuarioBuilder();
+        builder.username = "nombre base";
+        builder.seguidosId = new ArrayList<>();
+        return builder;
+    }
 
-        public UsuarioBuilder conUsername(String username) {
-            this.username = username;
-            return this;
-        }
+    public UsuarioBuilder conUsername(String username) {
+        this.username = username;
+        return this;
+    }
 
-        public UsuarioBuilder conSeguidosId(List<Long> seguidosId) {
-            this.seguidosId = seguidosId;
-            return this;
-        }
+    public UsuarioBuilder conSeguidosId(List<Long> seguidosId) {
+        this.seguidosId = seguidosId;
+        return this;
+    }
 
-        public Usuario build() {
-            Usuario usuario = new Usuario();
-            usuario.setUsername(username);
-            usuario.setSeguidosId(seguidosId);
-            return usuario;
-        }
+    public UsuarioBuilder conId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Usuario build() {
+        Usuario usuario = new Usuario();
+        usuario.setUsername(username);
+        usuario.setSeguidosId(seguidosId);
+        usuario.setId(id);
+        return usuario;
+    }
 
 }

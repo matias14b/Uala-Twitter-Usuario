@@ -1,12 +1,10 @@
 package com.ejercicio.uala.usuario.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,5 +19,10 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    @ElementCollection
+    @CollectionTable(
+            name = "seguido",
+            joinColumns = @JoinColumn(name = "usuario_id"))
+    @Column(name = "seguidos_id")
     private List<Long> seguidosId;
 }

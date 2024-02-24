@@ -2,14 +2,20 @@ package com.ejercicio.uala.usuario.service;
 
 import com.ejercicio.uala.usuario.builder.UsuarioBuilder;
 import com.ejercicio.uala.usuario.domain.Usuario;
+import com.ejercicio.uala.usuario.dto.UsuarioDTO;
+import com.ejercicio.uala.usuario.repository.UsuarioRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.HttpClientErrorException;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 class UsuarioServiceImplTest {
@@ -17,42 +23,139 @@ class UsuarioServiceImplTest {
     @Autowired
     private UsuarioServiceImpl usuarioServiceImpl;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
     @Test
     @Transactional
-    void validarExisteUsuario_conIdUsuarioExistente_retornaTrue() {
+    void validarExisteUsuario_conIdUsuarioExistente_retornaUsuario() {
         Usuario usuario = UsuarioBuilder.base().conUsername("Ejemplo").build();
         persistirEnBase(usuario);
-
-        assertThat(usuarioServiceImpl.validarExisteUsuario(usuario.getId())).isTrue();
+        UsuarioDTO usuarioValidado = usuarioServiceImpl.validarExisteUsuario(usuario.getUsername());
+        assertThat(usuarioValidado.getUsername()).isEqualTo(usuario.getUsername());
     }
 
     @Test
-    void validarExisteUsuario_conIdUsuarioInexistente_retornaFalse() {
-        assertThat(usuarioServiceImpl.validarExisteUsuario(1L)).isFalse();
+    void validarExisteUsuario_conIdUsuarioInexistente_lanzaExcepcion() {
+        assertThatExceptionOfType(IllegalAccessError.class)
+                .isThrownBy((() -> usuarioServiceImpl.validarExisteUsuario("usuarioInvalido")))
+                .withMessage("Credenciales invalidas.");
     }
 
     @Test
     @Transactional
-    void seguirUsuario_conUsuarioSeguidoExistenteYUsuarioSeguidorExistente_retornaUsuarioSeguidorConIdDeUsuarioSeguido() {
+    void seguirUsuario_conUsuarioSeguidoExistenteYUsuarioASeguirValido_retornaUsuarioSeguidorConIdDeUsuarioSeguidoYPersisteEnBase() {
         Usuario usuarioSeguidor = UsuarioBuilder
                 .base()
                 .conUsername("Seguidor")
-                .conSeguidosId(null)
+                .conSeguidosId(new ArrayList<>())
                 .build();
         persistirEnBase(usuarioSeguidor);
 
+        Usuario usuarioASeguir = UsuarioBuilder
+                .base()
+                .conUsername("Seguido")
+                .build();
+        persistirEnBase(usuarioASeguir);
+
+        Usuario usuarioSeguidorConIdDeUsuarioSeguido = usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioASeguir.getId());
+
+
+        assertThat(usuarioSeguidorConIdDeUsuarioSeguido.getSeguidosId()).contains(usuarioASeguir.getId());
+    }
+
+    @Test
+    @Transactional
+    void seguirUsuario_conUsuarioSeguidoExistenteConUsuarioSeguidorPrevioValidoAgregaNuevoUsuarioSeguidorValido_retornaUsuarioSeguidorConIdDeUsuarioSeguidoYIdDeUsuarioASeguir() {
         Usuario usuarioSeguido = UsuarioBuilder
                 .base()
                 .conUsername("Seguido")
                 .build();
         persistirEnBase(usuarioSeguido);
 
-        Usuario usuarioSeguidorConIdDeUsuarioSeguido = usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioSeguido.getId());
+        Usuario usuarioSeguidor = UsuarioBuilder
+                .base()
+                .conUsername("Seguidor")
+                .conSeguidosId(Arrays.asList(usuarioSeguido.getId()))
+                .build();
+        persistirEnBase(usuarioSeguidor);
 
-        assertThat(usuarioSeguidorConIdDeUsuarioSeguido.getSeguidosId()).contains(usuarioSeguido.getId());
+        Usuario usuarioASeguir = UsuarioBuilder
+                .base()
+                .conUsername("UsuarioASeguir")
+                .build();
+        persistirEnBase(usuarioASeguir);
+
+        Usuario usuarioSeguidorConIdDeUsuarioSeguido = usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioASeguir.getId());
+
+        assertThat(usuarioSeguidorConIdDeUsuarioSeguido.getSeguidosId()).contains(usuarioSeguido.getId(), usuarioASeguir.getId());
+    }
+
+    @Test
+    @Transactional
+    void seguirUsuario_conUsuarioSeguidorValidoSigueAUsuarioSeguidoIntentaSeguirNuevamenteAUsuarioSeguido_lanzaExcepcion() {
+        Usuario usuarioSeguido = UsuarioBuilder
+                .base()
+                .conUsername("Seguido")
+                .build();
+        persistirEnBase(usuarioSeguido);
+
+        Usuario usuarioSeguidor = UsuarioBuilder
+                .base()
+                .conUsername("Seguidor")
+                .conSeguidosId(Arrays.asList(usuarioSeguido.getId()))
+                .build();
+        persistirEnBase(usuarioSeguidor);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioSeguido.getId()))
+                .withMessage("Ya esta siguiendo a este usuario.");
+
+    }
+
+    @Test
+    @Transactional
+    void seguirUsuario_conUsuarioSeguidorExistenteSigueNuevoUsuarioInvalido_lanzaExcepcion() {
+        Usuario usuarioSeguidor = UsuarioBuilder
+                .base()
+                .conUsername("Seguidor")
+                .build();
+        persistirEnBase(usuarioSeguidor);
+
+        Usuario usuarioSeguido = UsuarioBuilder
+                .base()
+                .conId(usuarioSeguidor.getId() + 1L)
+                .conUsername("Seguido")
+                .build();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioSeguido.getId()))
+                .withMessage("El usuario al que está intentando seguir es inexistente.");
+
+    }
+
+    @Test
+    @Transactional
+    void seguirUsuario_conUsuarioSeguidorInexistente_lanzaExcepcion() {
+        Usuario usuarioSeguido = UsuarioBuilder
+                .base()
+                .conUsername("Seguidor")
+                .build();
+        persistirEnBase(usuarioSeguido);
+
+        Usuario usuarioSeguidor = UsuarioBuilder
+                .base()
+                .conId(usuarioSeguido.getId() + 1)
+                .conUsername("Seguido")
+                .build();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioSeguido.getId()))
+                .withMessage("El usuario es inexistente.");
+
     }
 
     private void persistirEnBase(Usuario usuario) {
