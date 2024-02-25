@@ -2,7 +2,6 @@ package com.ejercicio.uala.usuario.service;
 
 import com.ejercicio.uala.usuario.builder.UsuarioBuilder;
 import com.ejercicio.uala.usuario.domain.Usuario;
-import com.ejercicio.uala.usuario.dto.UsuarioDTO;
 import com.ejercicio.uala.usuario.repository.UsuarioRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,7 +9,6 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,6 +154,23 @@ class UsuarioServiceImplTest {
                 .isThrownBy(() -> usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioSeguido.getId()))
                 .withMessage("El usuario es inexistente.");
 
+    }
+
+    @Test
+    @Transactional
+    void buscarPorId_conIdUsuarioExistente_retornaUsuario() {
+        Usuario usuario = UsuarioBuilder.base().conUsername("Ejemplo").build();
+        persistirEnBase(usuario);
+
+        Usuario usuarioValidado = usuarioServiceImpl.buscarPorId(usuario.getId());
+        assertThat(usuarioValidado.getUsername()).isEqualTo(usuario.getUsername());
+    }
+
+    @Test
+    void buscarPorId_conIdUsuarioInexistente_lanzaExcepcion() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy((() -> usuarioServiceImpl.buscarPorId(-1L)))
+                .withMessage("El usuario es inexistente.");
     }
 
     private void persistirEnBase(Usuario usuario) {

@@ -25,14 +25,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario seguir(Long idUsuarioSeguidor, Long idUsuarioSeguido) {
-        Usuario usuarioSeguido = usuarioRepository.findById(idUsuarioSeguido).orElse(null);
-        Assert.notNull(usuarioSeguido, "El usuario al que está intentando seguir es inexistente.");
+        Usuario usuarioSeguido = usuarioRepository.findById(idUsuarioSeguido)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario al que está intentando seguir es inexistente."));
 
-        Usuario usuarioSeguidor = usuarioRepository.findById(idUsuarioSeguidor).orElse(null);
-        Assert.notNull(usuarioSeguidor, "El usuario es inexistente.");
+        Usuario usuarioSeguidor = usuarioRepository.findById(idUsuarioSeguidor)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario es inexistente."));
 
-        Assert.isTrue(usuarioSeguidor.getSeguidosId().stream().filter(seguidoId -> seguidoId.equals(usuarioSeguido.getId())).collect(Collectors.toList()).isEmpty(), "Ya esta siguiendo a este usuario.");
+        Assert.isTrue(usuarioSeguidor.getSeguidosId()
+                .stream()
+                .noneMatch(seguidoId -> seguidoId.equals(usuarioSeguido.getId())),"Ya esta siguiendo a este usuario.");
+
         usuarioSeguidor.getSeguidosId().add(idUsuarioSeguido);
         return usuarioRepository.save(usuarioSeguidor);
+    }
+
+    @Override
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("El usuario es inexistente."));
     }
 }

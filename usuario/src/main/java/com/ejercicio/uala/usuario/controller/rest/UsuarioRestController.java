@@ -14,7 +14,7 @@ public class UsuarioRestController {
     private final UsuarioServiceImpl usuarioServiceImpl;
 
     @PutMapping("/api/usuario/{idUsuarioSeguidor}/seguidor/{idUsuarioSeguido}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public UsuarioDTO seguir(@PathVariable Long idUsuarioSeguidor, @PathVariable Long idUsuarioSeguido) {
         Usuario usuarioSeguidor = usuarioServiceImpl.seguir(idUsuarioSeguidor, idUsuarioSeguido);
         return new UsuarioDTO(usuarioSeguidor.getUsername(), usuarioSeguidor.getSeguidosId());
@@ -25,5 +25,12 @@ public class UsuarioRestController {
     public UsuarioDTO iniciarSesion(@PathVariable String username) {
         Usuario usuario = usuarioServiceImpl.validarExisteUsuario(username);
         return new UsuarioDTO(usuario.getId(), usuario.getUsername());
+    }
+
+    @GetMapping("/api/usuario/{id}/seguidos")
+    @ResponseStatus(HttpStatus.OK)
+    public UsuarioDTO buscarPorId(@PathVariable Long id) {
+        Usuario usuario = usuarioServiceImpl.buscarPorId(id);
+        return new UsuarioDTO(usuario.getId(), usuario.getUsername(), usuario.getSeguidosId());
     }
 }
