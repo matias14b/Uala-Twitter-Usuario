@@ -17,14 +17,14 @@ public class UsuarioRestController {
     @ResponseStatus(HttpStatus.OK)
     public UsuarioDTO seguir(@PathVariable Long idUsuarioSeguidor, @PathVariable Long idUsuarioSeguido) {
         Usuario usuarioSeguidor = usuarioServiceImpl.seguir(idUsuarioSeguidor, idUsuarioSeguido);
-        return new UsuarioDTO(usuarioSeguidor.getUsername(), usuarioSeguidor.getSeguidosId());
+        return new UsuarioDTO(usuarioSeguidor.getId(), usuarioSeguidor.getUsername(), usuarioSeguidor.getSeguidosId());
     }
 
     @GetMapping("/api/usuario/{username}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public UsuarioDTO iniciarSesion(@PathVariable String username) {
         Usuario usuario = usuarioServiceImpl.validarExisteUsuario(username);
-        return new UsuarioDTO(usuario.getId(), usuario.getUsername());
+        return new UsuarioDTO(usuario.getId(), usuario.getUsername(), null);
     }
 
     @GetMapping("/api/usuario/{id}/seguidos")

@@ -137,6 +137,22 @@ class UsuarioServiceImplTest {
 
     @Test
     @Transactional
+    void seguirUsuario_conUsuarioSeguidorIntentaSeguirASiMismo_lanzaExcepcion() {
+
+        Usuario usuarioSeguidor = UsuarioBuilder
+                .base()
+                .conUsername("Seguido")
+                .build();
+        persistirEnBase(usuarioSeguidor);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> usuarioServiceImpl.seguir(usuarioSeguidor.getId(), usuarioSeguidor.getId()))
+                .withMessage("El usuario a seguir no puede ser el mismo que el usuario seguidor");
+
+    }
+
+    @Test
+    @Transactional
     void seguirUsuario_conUsuarioSeguidorInexistente_lanzaExcepcion() {
         Usuario usuarioSeguido = UsuarioBuilder
                 .base()

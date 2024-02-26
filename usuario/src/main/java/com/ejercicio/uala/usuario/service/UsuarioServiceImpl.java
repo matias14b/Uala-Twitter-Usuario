@@ -31,9 +31,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuarioSeguidor = usuarioRepository.findById(idUsuarioSeguidor)
                 .orElseThrow(() -> new IllegalArgumentException("El usuario es inexistente."));
 
+        Assert.isTrue(!usuarioSeguidor.getId().equals(usuarioSeguido.getId()), "El usuario a seguir no puede ser el mismo que el usuario seguidor");
+
         Assert.isTrue(usuarioSeguidor.getSeguidosId()
                 .stream()
-                .noneMatch(seguidoId -> seguidoId.equals(usuarioSeguido.getId())),"Ya esta siguiendo a este usuario.");
+                .noneMatch(seguidoId -> seguidoId.equals(usuarioSeguido.getId())), "Ya esta siguiendo a este usuario.");
 
         usuarioSeguidor.getSeguidosId().add(idUsuarioSeguido);
         return usuarioRepository.save(usuarioSeguidor);
