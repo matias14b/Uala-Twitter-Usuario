@@ -1,7 +1,11 @@
+DROP table if exists seguido;
+DROP table if exists usuario;
+
 CREATE TABLE usuario (
 id                  BIGINT PRIMARY KEY AUTO_INCREMENT,
 username            VARCHAR(45) NOT NULL
 );
+
 
 CREATE TABLE seguido
 (
@@ -11,4 +15,5 @@ CREATE TABLE seguido
 
     CONSTRAINT fk_usuario_seguido FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
-INSERT INTO usuario (username) VALUES ('ichiban');
+
+
