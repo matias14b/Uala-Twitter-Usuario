@@ -17,7 +17,8 @@ La clase de dominio esta formada por un Usuario que contiene una lista de seguid
 ### Diagrama de servicio
 
 A nivel arquitectura se decidio por MVC 
-![image](https://github.com/matias14b/Uala-Twitter-Usuario/assets/127508318/b0a9779f-7f83-4e10-80d6-2c7b6f105f6e)
+![image](https://github.com/matias14b/Usuario-Uala-Twitter/assets/127508318/8f8e8e56-3cec-4c8b-b079-9fc16b814409)
+
 
 ## API Reference
 
@@ -62,6 +63,30 @@ El servicio Usuario expone los siguientes servicios:
     "username": "ichiban",
     "seguidosId": null
 } 
+```
+
+#### Buscar usuario con seguidores por id
+
+```http
+  GET/api/usuario/{id}/seguidos
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `Long` | **Requerido**. id del usuario del que se intenta obtener sus usuarios seguidos |
+
+###### Respuesta
+```yaml
+{
+    "id": 1,
+    "username": "ichiban",
+    "seguidosId": [
+        2,
+        3,
+        4,
+        6
+    ]
+}
 ```
 
 ## Running Tests
