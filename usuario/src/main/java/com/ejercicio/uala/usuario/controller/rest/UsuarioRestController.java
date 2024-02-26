@@ -13,7 +13,7 @@ public class UsuarioRestController {
 
     private final UsuarioServiceImpl usuarioServiceImpl;
 
-    @PutMapping("/api/usuario/{idUsuarioSeguidor}/seguidor/{idUsuarioSeguido}")
+    @PutMapping("/api/usuario/{idUsuarioSeguidor}/seguido/{idUsuarioSeguido}")
     @ResponseStatus(HttpStatus.OK)
     public UsuarioDTO seguir(@PathVariable Long idUsuarioSeguidor, @PathVariable Long idUsuarioSeguido) {
         Usuario usuarioSeguidor = usuarioServiceImpl.seguir(idUsuarioSeguidor, idUsuarioSeguido);
@@ -29,8 +29,8 @@ public class UsuarioRestController {
 
     @GetMapping("/api/usuario/{id}/seguidos")
     @ResponseStatus(HttpStatus.OK)
-    public UsuarioDTO buscarPorId(@PathVariable Long id) {
-        Usuario usuario = usuarioServiceImpl.buscarPorId(id);
+    public UsuarioDTO buscarUsuarioConSeguidosPorId(@PathVariable Long id) {
+        Usuario usuario = usuarioServiceImpl.buscarUsuarioConSeguidosPorId(id);
         return new UsuarioDTO(usuario.getId(), usuario.getUsername(), usuario.getSeguidosId());
     }
 }

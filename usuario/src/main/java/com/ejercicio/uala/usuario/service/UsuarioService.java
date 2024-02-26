@@ -7,6 +7,6 @@ public interface UsuarioService {
 
     Usuario seguir(Long idUsuarioSeguidor, Long idUsuarioSeguido);
 
-    Usuario buscarPorId(Long id);
+    Usuario buscarUsuarioConSeguidosPorId(Long id);
 }
 

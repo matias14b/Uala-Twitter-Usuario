@@ -42,7 +42,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario buscarPorId(Long id) {
+    public Usuario buscarUsuarioConSeguidosPorId(Long id) {
         return usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("El usuario es inexistente."));
     }
 }

@@ -178,14 +178,14 @@ class UsuarioServiceImplTest {
         Usuario usuario = UsuarioBuilder.base().conUsername("Ejemplo").build();
         persistirEnBase(usuario);
 
-        Usuario usuarioValidado = usuarioServiceImpl.buscarPorId(usuario.getId());
+        Usuario usuarioValidado = usuarioServiceImpl.buscarUsuarioConSeguidosPorId(usuario.getId());
         assertThat(usuarioValidado.getUsername()).isEqualTo(usuario.getUsername());
     }
 
     @Test
     void buscarPorId_conIdUsuarioInexistente_lanzaExcepcion() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy((() -> usuarioServiceImpl.buscarPorId(-1L)))
+                .isThrownBy((() -> usuarioServiceImpl.buscarUsuarioConSeguidosPorId(-1L)))
                 .withMessage("El usuario es inexistente.");
     }
 
