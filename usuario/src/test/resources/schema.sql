@@ -1,3 +1,6 @@
+DROP table if exists seguido;
+DROP table if exists usuario;
+
 CREATE TABLE usuario (
 id                  BIGINT PRIMARY KEY AUTO_INCREMENT,
 username            VARCHAR(45) NOT NULL
